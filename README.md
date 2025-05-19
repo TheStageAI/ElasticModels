@@ -44,7 +44,7 @@ Elastic models are the models produced by TheStage AI ANNA: Automated Neural Net
 ## Quick Start
 
 __System requirements:__
-* GPUs: B200 (partially), H100, L40s, B200, 
+* GPUs: B200 (diffusion), RTX 5090 (diffusion) H100, L40s 
 * CPU: AMD, Intel
 * Python: 3.10-3.12
 
@@ -144,6 +144,7 @@ print(f"# A:\n{output}\n")
 
 ## Roadmap
 
+- Add support for A100, A10g, RTX 4090
 - Models serving.
 - VLMs.
 - Text-to-video models.
