@@ -1,13 +1,5 @@
 <div align="center" id="sglangtop">
 <img src="images/logo.png" alt="logo" width="400" margin="10px"></img>
-
-<!-- [![PyPI](https://img.shields.io/pypi/v/sglang)](https://pypi.org/project/sglang)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/sglang)
-[![license](https://img.shields.io/github/license/sgl-project/sglang.svg)](https://github.com/sgl-project/sglang/tree/main/LICENSE)
-[![issue resolution](https://img.shields.io/github/issues-closed-raw/sgl-project/sglang)](https://github.com/sgl-project/sglang/issues)
-[![open issues](https://img.shields.io/github/issues-raw/sgl-project/sglang)](https://github.com/sgl-project/sglang/issues)
-[![](https://img.shields.io/badge/Gurubase-(experimental)-006BFF)](https://gurubase.io/g/sglang) -->
-
 </div>
 
 --------------------------------------------------------------------------------
@@ -49,23 +41,10 @@ Elastic models are the models produced by TheStage AI ANNA: Automated Neural Net
 
 ![](images/flux.jpeg)
 
-
-
-
-<!-- <details>
-<summary>More</summary>
-
-- [2024/10] The First SGLang Online Meetup ([slides](https://github.com/sgl-project/sgl-learning-materials?tab=readme-ov-file#the-first-sglang-online-meetup)).
-- [2024/02] SGLang enables **3x faster JSON decoding** with compressed finite state machine ([blog](https://lmsys.org/blog/2024-02-05-compressed-fsm/)).
-- [2024/01] SGLang provides up to **5x faster inference** with RadixAttention ([blog](https://lmsys.org/blog/2024-01-17-sglang/)).
-- [2024/01] SGLang powers the serving of the official **LLaVA v1.6** release demo ([usage](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#demo)).
-
-</details> -->
-
 ## Quick Start
 
 __System requirements:__
-* GPUs: H100, L40s
+* GPUs: B200 (partially), H100, L40s, B200, 
 * CPU: AMD, Intel
 * Python: 3.10-3.12
 
@@ -90,6 +69,68 @@ thestage config set --api-token <YOUR_API_TOKEN>
 
 Congrats, now you can use accelerated models!
 
+```python
+import torch
+from transformers import AutoTokenizer
+from elastic_models.transformers import AutoModelForCausalLM
+
+# Currently we require to have your HF token
+# as we use original weights for part of layers and
+# model confugaration as well
+model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+hf_token = ''
+device = torch.device("cuda")
+
+# Create mode
+tokenizer = AutoTokenizer.from_pretrained(
+    model_name, token=hf_token
+)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name, 
+    token=hf_token,
+    torch_dtype=torch.bfloat16,
+    attn_implementation="sdpa",
+    mode='S'
+).to(device)
+model.generation_config.pad_token_id = tokenizer.eos_token_id
+
+# Inference simple as transformers library
+prompt = "Describe basics of DNNs quantization."
+messages = [
+  {
+    "role": "system",
+    "content": "You are a search bot, answer on user text queries."
+  },
+  {
+    "role": "user",
+    "content": prompt
+  }
+]
+
+chat_prompt = tokenizer.apply_chat_template(
+    messages, add_generation_prompt=True, tokenize=False
+)
+
+inputs = tokenizer(chat_prompt, return_tensors="pt")
+inputs.to(device)
+
+with torch.inference_mode():
+    generate_ids = model.generate(**inputs, max_length=500)
+
+input_len = inputs['input_ids'].shape[1]
+generate_ids = generate_ids[:, input_len:]
+output = tokenizer.batch_decode(
+    generate_ids,
+    skip_special_tokens=True, 
+    clean_up_tokenization_spaces=False
+)[0]
+
+# Validate answer
+print(f"# Q:\n{prompt}\n")
+print(f"# A:\n{output}\n")
+
+```
+
 ## Current state
 
 - **Hardware.** Nvidia H100, L40s. More GPUs are coming.
@@ -99,25 +140,16 @@ Congrats, now you can use accelerated models!
 - **Context length.** Demo models support context lenght up to 8192 tokens and batch size up to 32 depending on GPU.
 - **Image sizes.** Diffusion models currently supports image resolution up to 1280x1280.
 - **Memory usage.** Currently inference engine preallocates memory for maximum possible size. For more precise memory control - contact us at contact@thestage.ai
-- **Speed.** Models demonstrates world leading performance comparing to open benchmarks. For instnace, LLama3 8B gives ~195 tok/s with 100/300 input-output test and ~170 tok/s with 4096/1000 input-output test.
+- **Speed.** Models demonstrates world leading performance comparing to open benchmarks. For instnace, LLama3 8B gives ~195 tok/s with 100/300 input-output test and ~170 tok/s with 4096/1000 input-output test on H100. For each model we are providing benchmarks.
 
 ## Roadmap
 
-- Release models serving
-- VLMs releaase
-- Text-to-video models release. 
+- Models serving.
+- VLMs.
+- Text-to-video models.
+- Edge devices inference.
 
-
-## Production Cases
-The project has been deployed to large-scale production, generating trillions of tokens every day.
-It is supported by the following institutions: AMD, Atlas Cloud, Baseten, Cursor, DataCrunch, Etched, Hyperbolic, Iflytek, Jam & Tea Studios, LinkedIn, LMSYS, Meituan, Nebius, Novita AI, NVIDIA, Oracle, RunPod, Stanford, UC Berkeley, UCLA, xAI, and 01.AI.
-
-<img src="https://raw.githubusercontent.com/sgl-project/sgl-learning-materials/main/slides/adoption.png" alt="logo" width="800" margin="10px"></img>
 
 ## Contact Us
 
 For companies interested in deploying TheStage AI inference engine in their environment, application of ANNA for custom models or partnership please contact us at contact@thestage.ai.
-
-
-
-# Aknowlegents
