@@ -6,7 +6,7 @@
 
 | [**Hugging Face**]()
 | [**TheStage AI Platform**](https://app.thestage.ai/)
-| [**TheStage AI Website**](https://thestage.ai/)
+| [**TheStage AI Website**](https://about.thestage.ai/)
 | [**TheStage AI X**](https://https://x.com/TheStageAI)
 
 ---
