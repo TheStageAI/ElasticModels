@@ -52,13 +52,9 @@ __System requirements:__
 To work with our models just run these lines in your terminal:
 
 ```shell
-pip install thestage
-pip install elastic_models[nvidia]\
- --index-url https://thestage.jfrog.io/artifactory/api/pypi/pypi-thestage-ai-production/simple\
- --extra-index-url https://pypi.nvidia.com\
- --extra-index-url https://pypi.org/simple
-pip install flash_attn==2.7.3 --no-build-isolation
-pip uninstall apex
+pip install thestage_elastic_models[nvidia]
+# additional dependencies
+pip install flash_attn==2.8.2 --no-build-isolation
 ```
 
 Then go to [app.thestage.ai](https://app.thestage.ai), login and generate API token from your profile page. Set up API token as follows:
@@ -67,7 +63,43 @@ Then go to [app.thestage.ai](https://app.thestage.ai), login and generate API to
 thestage config set --api-token <YOUR_API_TOKEN>
 ```
 
-Congrats, now you can use accelerated models!
+Congrats, now you can use accelerated models! Test your setup:
+
+```python
+
+import elastic_models
+
+elastic_models.print_available_models()
+```
+
+Output:
+
+```shell
+    
+----------------------------------------------------------------------------------------------------------------------------------
+Model                                              | B200        | RTX-4090 | RTX-5090 | H100        | L40S       
+----------------------------------------------------------------------------------------------------------------------------------
+DavidAU/MN-GRAND-Gutenberg-Lyra4-Lyra-12B-DARKNESS |             | S, M     | S, M, L  |             |            
+Qwen/Qwen2.5-14B-Instruct                          |             |          |          | S, M, L, XL | S, M, L, XL
+Qwen/Qwen2.5-7B-Instruct                           |             |          |          | S, M, L, XL | S, M, L, XL
+black-forest-labs/FLUX.1-dev                       | S, M, L, XL |          | S        | S, M, L, XL | S, M, L, XL
+black-forest-labs/FLUX.1-schnell                   | S, M, L, XL |          | S        | S, M, L, XL | S, M, L, XL
+deepseek-ai/DeepSeek-R1-Distill-Qwen-14B           |             |          |          | S, M, L, XL | S, M, L, XL
+deepseek-ai/DeepSeek-R1-Distill-Qwen-7B            |             |          |          | S, M, L, XL | S, M, L, XL
+facebook/musicgen-large                            |             |          |          | S, M, L, XL | S, M, L, XL
+genmo/mochi-1-preview                              | S, XL       |          |          | S, XL       |            
+meta-llama/Llama-3.1-8B-Instruct                   |             |          |          | S, M, L, XL | S, M, L, XL
+meta-llama/Llama-3.2-1B-Instruct                   |             |          |          | S, M, L, XL | S, M, L, XL
+mistralai/Mistral-7B-Instruct-v0.3                 |             |          |          | S, M, L, XL | S, M, L, XL
+mistralai/Mistral-Nemo-Instruct-2407               |             |          |          | S, M, L, XL | S, M, L, XL
+mistralai/Mistral-Small-3.1-24B-Instruct-2503      |             |          |          | S, M, L, XL | S, M, L    
+openai/whisper-large-v3                            |             |          |          | S           | S          
+stabilityai/stable-diffusion-xl-base-1.0           |             |          |          | XL          | XL         
+----------------------------------------------------------------------------------------------------------------------------------
+
+```
+
+Test accelerated Llama 8B:
 
 ```python
 import torch
@@ -141,14 +173,6 @@ print(f"# A:\n{output}\n")
 - **Image sizes.** Diffusion models currently supports image resolution up to 1280x1280.
 - **Memory usage.** Currently inference engine preallocates memory for maximum possible size. For more precise memory control - contact us at contact@thestage.ai
 - **Speed.** Models demonstrates world leading performance comparing to open benchmarks. For instnace, LLama3 8B gives ~195 tok/s with 100/300 input-output test and ~170 tok/s with 4096/1000 input-output test on H100. For each model we are providing benchmarks.
-
-## Roadmap
-
-- Add support for A100, A10g, RTX 4090
-- Models serving.
-- VLMs.
-- Text-to-video models.
-- Edge devices inference.
 
 
 ## Contact Us

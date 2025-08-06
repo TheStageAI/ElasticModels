@@ -1,0 +1,6 @@
+datasets
+librosa
+lm_eval
+sentencepiece
+pynvml
+hugging-face-hub
