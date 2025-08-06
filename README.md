@@ -67,9 +67,9 @@ Congrats, now you can use accelerated models! Test your setup:
 
 ```python
 
-    import elastic_models
+import elastic_models
 
-    elastic_models.print_available_models()
+elastic_models.print_available_models()
 ```
 
 Output:
