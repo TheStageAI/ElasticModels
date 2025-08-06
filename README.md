@@ -99,6 +99,8 @@ stabilityai/stable-diffusion-xl-base-1.0           |             |          |   
 
 ```
 
+Test accelerated Llama 8B:
+
 ```python
 import torch
 from transformers import AutoTokenizer
