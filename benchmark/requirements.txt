@@ -1,5 +1,4 @@
 datasets==3.6.0
-thestage-elastic-models
 librosa
 lm_eval
 sentencepiece

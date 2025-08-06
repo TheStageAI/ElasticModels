@@ -207,7 +207,7 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--hf_token", default=os.environ.get("HF_TOKEN", ""), type=str)
     parser.add_argument(
         "--cache_dir",
-        default="/mnt/rnd/huggingface_cache",
+        default=None,
         type=str,
         help="Directory to store cache files",
     )
