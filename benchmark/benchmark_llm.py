@@ -4,6 +4,7 @@ import logging
 import os
 import timeit
 from pathlib import Path
+from logger import _LOGGER_MAIN
 
 import torch
 from transformers.pipelines import pipeline
@@ -72,6 +73,11 @@ def get_vlm_generator(args):
 
 
 def get_llm_generator(args):
+
+    _LOGGER_MAIN.info(
+        f"Loading model {args.model_name} in {args.mode} mode with dtype {args.dtype}"
+    )
+
     tokenizer = AutoTokenizer.from_pretrained(
         args.model_name, token=args.hf_token, padding_side="left"
     )
@@ -98,6 +104,9 @@ def get_llm_generator(args):
 
     generator = pipeline(
         task="text-generation", model=model, tokenizer=tokenizer, device=args.device
+    )
+    _LOGGER_MAIN.info(
+        f"Model {args.model_name} in {args.mode} mode loaded successfully."
     )
     return generator
 
@@ -223,13 +232,21 @@ def benchmark_quality(generator, args):
     )
     out = {}
     for task_name in args.bench_tasks:
+        _LOGGER_MAIN.info(f"Running quality benchmark for task: {task_name}")
         out[task_name] = evaluator.simple_evaluate(
             model=lm,
             tasks=[task_name],
             # gen_kwargs={"past_key_values": past_key_values},
         )["results"]
+        _LOGGER_MAIN.info("Quality benchmark for task %s completed.", task_name)
 
-    print(out)
+    # print(out)
+
+    for task_name, results in out.items():
+        _LOGGER_MAIN.info(f"Results for task {task_name}:")
+        for metric, value in results.items():
+            _LOGGER_MAIN.info(f"{metric}: {value}")
+    
     return out
 
 
@@ -307,6 +324,9 @@ if __name__ == "__main__":
 
     prompt = get_prompt(args)
 
+    _LOGGER_MAIN.info(
+        f"Starting speed benchmark for {args.model_name} in {args.mode} mode"
+    )
     results = benchmark(
         generator,
         prompt,
@@ -314,11 +334,24 @@ if __name__ == "__main__":
         **generate_kwargs,
         include_memory=not args.no_memory,
     )
-    print(f"Results for {args.mode} mode:")
-    print(results)
+    _LOGGER_MAIN.info(
+        f"Starting speed benchmark for {args.model_name} in {args.mode} mode"
+    )
+    _LOGGER_MAIN.info(f"Speed benchmark for {args.model_name} in {args.mode} are ready:")
+
+    for key, value in results.items():
+        _LOGGER_MAIN.info(f"{key}: {value}")
+    _LOGGER_MAIN.info("Speed benchmarking completed.")
+
 
     if args.bench_tasks:
+        _LOGGER_MAIN.info(
+            f"Starting quality benchmark for {args.model_name} in {args.mode} mode"
+        )
         benchmark_quality(generator, args)
+        _LOGGER_MAIN.info(
+            f"Quality benchmark for {args.model_name} in {args.mode} mode completed."
+        )
 
     if args.check_output:
         check_output(
