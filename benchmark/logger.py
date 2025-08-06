@@ -23,7 +23,7 @@ def _get_std_formatter() -> logging.Formatter:
     Returns logging formatter 'date time: name: level: msg'.
     """
     formatter = logging.Formatter(
-        "%(asctime)s" ": %(name)s: %(levelname)s: %(message)s", "%Y-%m-%d %H:%M:%S"
+        "%(asctime)s" ": %(name)s: %(levelname)s: %(message)s", "%H:%M:%S"
     )
 
     return formatter
