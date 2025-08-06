@@ -75,7 +75,7 @@ def get_vlm_generator(args):
 def get_llm_generator(args):
 
     _LOGGER_MAIN.info(
-        f"Loading model {args.model_name} in {args.mode} mode with dtype {args.dtype}"
+        f"Loading model {args.model_name} in {args.mode} mode."
     )
 
     tokenizer = AutoTokenizer.from_pretrained(
