@@ -5,6 +5,7 @@ import random
 import timeit
 from pathlib import Path
 from typing import List, Optional
+from logger import _LOGGER_MAIN
 
 import numpy as np
 import torch
@@ -242,13 +243,22 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
 if __name__ == "__main__":
     args = parse_args()
 
+    _LOGGER_MAIN.info(
+        f"Loading model {args.model_name} in {args.mode} mode."
+    )
     generator = get_generator(args)
+    _LOGGER_MAIN.info(
+        f"Model {args.model_name} in {args.mode} mode loaded successfully."
+    )
     generate_kwargs = {"disable_compile": True}
     if args.mode != "original":
         generate_kwargs["cache_implementation"] = args.cache
 
     prompt = [args.prompt] * args.batch_size
 
+    _LOGGER_MAIN.info(
+        f"Starting latency benchmark for {args.model_name} in {args.mode} mode"
+    )
     results = benchmark(
         generator,
         prompt,
@@ -257,8 +267,12 @@ if __name__ == "__main__":
         **generate_kwargs,
         include_memory=not args.no_memory,
     )
-    print(f"Results for {args.mode} mode:")
-    print(results)
+    _LOGGER_MAIN.info(f"Latency benchmark for {args.model_name} in {args.mode} are ready:")
+    for key, value in results.items():
+        _LOGGER_MAIN.info(f"{key}: {value}")
+    _LOGGER_MAIN.info("Latency benchmarking completed.")
+    # print(f"Results for {args.mode} mode:")
+    # print(results)
 
     if args.output_dir:
         mode = args.mode if args.mode else "custom"

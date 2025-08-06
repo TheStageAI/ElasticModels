@@ -334,11 +334,11 @@ if __name__ == "__main__":
         **generate_kwargs,
         include_memory=not args.no_memory,
     )
-    _LOGGER_MAIN.info(f"latency benchmark for {args.model_name} in {args.mode} are ready:")
+    _LOGGER_MAIN.info(f"Latency benchmark for {args.model_name} in {args.mode} are ready:")
 
     for key, value in results.items():
         _LOGGER_MAIN.info(f"{key}: {value}")
-    _LOGGER_MAIN.info("latency benchmarking completed.")
+    _LOGGER_MAIN.info("Latency benchmarking completed.")
 
 
     if args.bench_tasks:

@@ -13,6 +13,7 @@ from diffusers.video_processor import VideoProcessor
 from diffusers.utils import export_to_video
 
 from gpu_monitor import GPUMemoryMonitor
+from logger import _LOGGER_MAIN
 
 logger = logging.getLogger(__name__)
 
@@ -270,8 +271,13 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
 if __name__ == "__main__":
     args = parse_args()
 
+    _LOGGER_MAIN.info(
+        f"Loading model {args.model_name} in {args.mode} mode."
+    )
     pipeline = get_pipeline(args)
-
+    _LOGGER_MAIN.info(
+        f"Model {args.model_name} in {args.mode} mode loaded successfully."
+    )
     kwargs = KWARGS_PER_MODEL.get(args.model_name, {})
 
     if args.sizes:
@@ -287,14 +293,26 @@ if __name__ == "__main__":
 
     prompt = [args.prompt] * args.batch_size
 
+    _LOGGER_MAIN.info(
+        f"Starting latency benchmark for {args.model_name} in {args.mode} mode"
+    )
     results = benchmark(
         pipeline,
         prompt,
         include_memory=not args.no_memory,
         **kwargs,
     )
-    print(f"Results for {args.mode} mode:")
-    print(results)
+    _LOGGER_MAIN.info(
+        f"Latency benchmark for {args.model_name} in {args.mode} mode are ready:"
+    )
+    
+    for key, value in results.items():
+        _LOGGER_MAIN.info(f"{key}: {value}")
+
+    _LOGGER_MAIN.info("Latency benchmarking completed.")
+
+    # print(f"Results for {args.mode} mode:")
+    # print(results)
 
     if args.content_dir:
         mode = args.mode if args.mode else ""
