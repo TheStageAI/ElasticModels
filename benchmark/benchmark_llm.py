@@ -325,7 +325,7 @@ if __name__ == "__main__":
     prompt = get_prompt(args)
 
     _LOGGER_MAIN.info(
-        f"Starting speed benchmark for {args.model_name} in {args.mode} mode"
+        f"Starting latency benchmark for {args.model_name} in {args.mode} mode"
     )
     results = benchmark(
         generator,
@@ -334,11 +334,11 @@ if __name__ == "__main__":
         **generate_kwargs,
         include_memory=not args.no_memory,
     )
-    _LOGGER_MAIN.info(f"Speed benchmark for {args.model_name} in {args.mode} are ready:")
+    _LOGGER_MAIN.info(f"latency benchmark for {args.model_name} in {args.mode} are ready:")
 
     for key, value in results.items():
         _LOGGER_MAIN.info(f"{key}: {value}")
-    _LOGGER_MAIN.info("Speed benchmarking completed.")
+    _LOGGER_MAIN.info("latency benchmarking completed.")
 
 
     if args.bench_tasks:
