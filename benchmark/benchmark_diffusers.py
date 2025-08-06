@@ -12,7 +12,7 @@ from diffusers import DiffusionPipeline as HFDiffusionPipeline
 from diffusers.video_processor import VideoProcessor
 from diffusers.utils import export_to_video
 
-from .gpu_monitor import GPUMemoryMonitor
+from gpu_monitor import GPUMemoryMonitor
 
 logger = logging.getLogger(__name__)
 

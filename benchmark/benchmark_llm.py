@@ -15,7 +15,7 @@ from transformers import (
 )
 from transformers.utils import logging as hf_logging
 
-from .gpu_monitor import GPUMemoryMonitor
+from gpu_monitor import GPUMemoryMonitor
 from elastic_models.transformers import (
     AutoModelForCausalLM,
     AutoModelForImageTextToText,

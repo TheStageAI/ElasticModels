@@ -16,7 +16,7 @@ from transformers.models.musicgen.modeling_musicgen import (
 )
 from transformers.utils import logging as hf_logging
 
-from .gpu_monitor import GPUMemoryMonitor
+from gpu_monitor import GPUMemoryMonitor
 from elastic_models.transformers import MusicgenForConditionalGeneration
 
 hf_logging.set_verbosity_error()
