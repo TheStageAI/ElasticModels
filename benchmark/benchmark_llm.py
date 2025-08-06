@@ -261,7 +261,7 @@ def parse_args(args=None):
     )
     parser.add_argument("--model_name", default="mistralai/Mistral-7B-Instruct-v0.3")
     parser.add_argument(
-        "--mode", default="original", choices=["original", "S", "M", "L", "XL", "XXL"]
+        "--mode", default="original", choices=["original", "S", "M", "L", "XL"]
     )
     parser.add_argument("--hf_token", default=os.environ.get("HF_TOKEN", ""), type=str)
     parser.add_argument(
