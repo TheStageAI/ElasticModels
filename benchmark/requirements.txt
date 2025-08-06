@@ -3,3 +3,4 @@ thestage-elastic-models
 librosa
 lm_eval
 sentencepiece
+pynvml
