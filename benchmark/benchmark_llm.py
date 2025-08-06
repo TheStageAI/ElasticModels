@@ -334,9 +334,6 @@ if __name__ == "__main__":
         **generate_kwargs,
         include_memory=not args.no_memory,
     )
-    _LOGGER_MAIN.info(
-        f"Starting speed benchmark for {args.model_name} in {args.mode} mode"
-    )
     _LOGGER_MAIN.info(f"Speed benchmark for {args.model_name} in {args.mode} are ready:")
 
     for key, value in results.items():
