@@ -3,4 +3,4 @@ librosa
 lm_eval
 sentencepiece
 pynvml
-hugging-face-hub
+huggingface-hub
