@@ -4,10 +4,11 @@
 
 --------------------------------------------------------------------------------
 
-| [**Hugging Face**]()
-| [**TheStage AI Platform**](https://app.thestage.ai/)
+| [**Hugging Face**](https://huggingface.co/TheStageAI)
+| [**TheStage AI Platform**](https://thestage.ai/)
+| [**TheStage AI Docs**](https://app.thestage.ai/docs)
 | [**TheStage AI Website**](https://about.thestage.ai/)
-| [**TheStage AI X**](https://https://x.com/TheStageAI)
+| [**TheStage AI X**](//https://x.com/TheStageAI)
 
 ---
 # Elastic Models: Fast and Flexible Models for Self-Serving
@@ -17,11 +18,11 @@ Elastic models are the models produced by TheStage AI ANNA: Automated Neural Net
 
 * __XL__: Mathematically equivalent neural network, optimized with our DNN compiler. 
 
-* __L__: Near lossless model, with less than 1% degradation obtained on corresponding benchmarks.
+* __L__: Near lossless model, with less than 0.5% degradation obtained on corresponding benchmarks.
 
-* __M__: Faster model, with accuracy degradation less than 1.5%.
+* __M__: Faster model, defined as averaged performance between L and S models.
 
-* __S__: The fastest model, with accuracy degradation less than 2%.
+* __S__: The fastest model, with accuracy degradation less than ~2%.
 
 * Supports LLMs, VLMs, Diffusion models. All models provided in Hugging Face transformers and diffusers libraries. 
 
@@ -76,10 +77,9 @@ Output:
 
 ```shell
     
-----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------
 Model                                              | B200        | RTX-4090 | RTX-5090 | H100        | L40S       
-----------------------------------------------------------------------------------------------------------------------------------
-DavidAU/MN-GRAND-Gutenberg-Lyra4-Lyra-12B-DARKNESS |             | S, M     | S, M, L  |             |            
+----------------------------------------------------------------------------------------------------------------------
 Qwen/Qwen2.5-14B-Instruct                          |             |          |          | S, M, L, XL | S, M, L, XL
 Qwen/Qwen2.5-7B-Instruct                           |             |          |          | S, M, L, XL | S, M, L, XL
 black-forest-labs/FLUX.1-dev                       | S, M, L, XL |          | S        | S, M, L, XL | S, M, L, XL
@@ -95,7 +95,7 @@ mistralai/Mistral-Nemo-Instruct-2407               |             |          |   
 mistralai/Mistral-Small-3.1-24B-Instruct-2503      |             |          |          | S, M, L, XL | S, M, L    
 openai/whisper-large-v3                            |             |          |          | S           | S          
 stabilityai/stable-diffusion-xl-base-1.0           |             |          |          | XL          | XL         
-----------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
 
 ```
 
