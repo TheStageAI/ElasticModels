@@ -8,7 +8,7 @@
 | [**TheStage AI Platform**](https://thestage.ai/)
 | [**TheStage AI Docs**](https://app.thestage.ai/docs)
 | [**TheStage AI Website**](https://about.thestage.ai/)
-| [**TheStage AI X**](//https://x.com/TheStageAI)
+| [**TheStage AI X**](https://x.com/TheStageAI)
 
 ---
 # Elastic Models: Fast and Flexible Models for Self-Serving
