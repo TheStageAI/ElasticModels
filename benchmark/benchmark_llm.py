@@ -244,8 +244,9 @@ def benchmark_quality(generator, args):
 
     for task_name, results in out.items():
         _LOGGER_MAIN.info(f"Results for task {task_name}:")
-        for metric, value in results.items():
-            _LOGGER_MAIN.info(f"accuracy: {value['acc_norm,none']}")
+        for _, value in results.items():
+            for name in value:
+                _LOGGER_MAIN.info(f"name: {value[name]}")
     
     return out
 
