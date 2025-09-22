@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import os
 import timeit
@@ -184,6 +185,47 @@ def benchmark(pipeline, prompt, number=1, repeat=5, include_memory=True, **kwarg
     return results
 
 
+def benchmark_quality(pipeline, args, generate_kwargs):
+    from qlip_algorithms.evaluation import (
+        PartiPromptsEvaluator,
+        DrawBenchEvaluator,
+        CocoEvaluator,
+    )
+
+    results = {}
+
+    for task_name in args.bench_tasks:
+        if task_name == "partiprompts":
+            evaluator = PartiPromptsEvaluator(
+                pipeline=pipeline,
+                cache_dir=args.cache_dir,
+                group="challenge",
+                num_samples=args.max_samples,
+                generation_kwargs=generate_kwargs,
+            )
+            results[task_name] = evaluator.evaluate()
+        elif task_name == "drawbench":
+            evaluator = DrawBenchEvaluator(
+                pipeline=pipeline,
+                cache_dir=args.cache_dir,
+                num_samples=args.max_samples,
+                generation_kwargs=generate_kwargs,
+            )
+            results[task_name] = evaluator.evaluate()
+        elif task_name == "coco":
+            evaluator = CocoEvaluator(
+                pipeline=pipeline,
+                cache_dir=args.cache_dir,
+                num_samples=args.max_samples,
+                generation_kwargs=generate_kwargs,
+            )
+            results[task_name] = evaluator.evaluate()
+        else:
+            raise ValueError(f"Invalid benchmark task: {task_name}")
+
+    return results
+
+
 KWARGS_PER_MODEL = {
     "stabilityai/stable-diffusion-xl-base-1.0": {
         "num_inference_steps": 50,
@@ -248,6 +290,18 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
         help="Directory to save generated content",
     )
     parser.add_argument("--no_memory", action="store_true")
+    parser.add_argument(
+        "--bench_tasks",
+        nargs="+",
+        default=[],
+        help="Tasks for quality benchmarks, e.g. `partiprompts`, `drawbench`, `coco`",
+    )
+    parser.add_argument(
+        "--max_samples", type=int, default=1000, help="Maximum samples for evaluators"
+    )
+    parser.add_argument(
+        "--output_file", type=str, default=None, help="File to save results"
+    )
     args = parser.parse_args(args)
 
     args.device = torch.device(args.device)
@@ -305,14 +359,36 @@ if __name__ == "__main__":
     _LOGGER_MAIN.info(
         f"Latency benchmark for {args.model_name} in {args.mode} mode are ready:"
     )
-    
     for key, value in results.items():
         _LOGGER_MAIN.info(f"{key}: {value}")
-
     _LOGGER_MAIN.info("Latency benchmarking completed.")
+
+    quality_results = None
+    if args.bench_tasks:
+        _LOGGER_MAIN.info("Starting quality benchmarks: %s" % ", ".join(args.bench_tasks))
+        quality_results = benchmark_quality(pipeline, args, kwargs)
+        _LOGGER_MAIN.info("Quality benchmarks completed.")
+        _LOGGER_MAIN.info("Results for quality benchmarks:")
+        for task_name, task_res in quality_results.items():
+            _LOGGER_MAIN.info(f"{task_name}: {task_res}")
 
     # print(f"Results for {args.mode} mode:")
     # print(results)
+
+    if args.output_file:
+        all_results = {
+            "model_name": args.model_name,
+            "mode": args.mode,
+            "batch_size": args.batch_size,
+            "inference_results": results,
+        }
+
+        if args.bench_tasks and quality_results is not None:
+            all_results["quality_results"] = quality_results
+
+        with open(args.output_file, "w") as f:
+            json.dump(all_results, f, indent=2)
+        _LOGGER_MAIN.info(f"Results saved to {args.output_file}")
 
     if args.content_dir:
         mode = args.mode if args.mode else ""
