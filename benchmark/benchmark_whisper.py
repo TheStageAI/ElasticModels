@@ -167,6 +167,48 @@ def benchmark(
 
 
 # -----------------
+# Quality benchmarking
+# -----------------
+def benchmark_quality(generator, args, generate_kwargs):
+    from qlip_algorithms.evaluation import (
+        CommonVoiceASREvaluator,
+        LibrispeechASREvaluator,
+    )
+
+    results = {}
+
+    if "common_voice" in args.bench_tasks:
+        evaluator = CommonVoiceASREvaluator(
+            generator,
+            cache_dir=args.cache_dir,
+            languages=args.languages,
+            num_samples=args.num_samples,
+            generation_kwargs={
+                "generate_kwargs": generate_kwargs,
+                "return_timestamps": True,
+            },
+        )
+        results["common_voice"] = evaluator.evaluate()
+    if "librispeech" in args.bench_tasks:
+        evaluator = LibrispeechASREvaluator(
+            pipeline=generator,
+            cache_dir=args.cache_dir,
+            num_samples=args.num_samples,
+            split="test.clean",
+            generation_kwargs={
+                "generate_kwargs": generate_kwargs,
+                "return_timestamps": True,
+            },
+        )
+        results["librispeech"] = evaluator.evaluate()
+
+    if not results:
+        raise ValueError(f"Invalid benchmark task(s): {args.bench_tasks}")
+
+    return results
+
+
+# -----------------
 # Check output
 # -----------------
 
@@ -208,6 +250,20 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--device", default="cuda", choices=["cuda", "cpu"])
     parser.add_argument("--dtype", type=str, default=torch.float16, help="dtype")
     parser.add_argument("--no_memory", action="store_true")
+    parser.add_argument("--num_samples", type=int, default=1000)
+
+    parser.add_argument(
+        "--bench_tasks",
+        nargs="+",
+        default=[],
+        help="Tasks for quality benchmarks, e.g. `librispeech`, `common_voice`",
+    )
+    parser.add_argument(
+        "--languages",
+        nargs="+",
+        default=["en"],
+        help="Languages for quality benchmarks, e.g. `en`, `es`, `fr`",
+    )
     args = parser.parse_args(args)
     args.device = torch.device(args.device)
 
@@ -251,6 +307,14 @@ if __name__ == "__main__":
         _LOGGER_MAIN.info(f"{key}: {value}")
     # print(f"Results for {args.mode} mode:")
     # print(results)
+
+    if args.bench_tasks:
+        _LOGGER_MAIN.info("Starting quality benchmarks: %s" % ", ".join(args.bench_tasks))
+        quality_results = benchmark_quality(generator, args, generate_kwargs)
+        _LOGGER_MAIN.info("Quality benchmarks completed.")
+        _LOGGER_MAIN.info("Results for quality benchmarks:")
+        for task_name, task_res in quality_results.items():
+            _LOGGER_MAIN.info(f"{task_name}: {task_res}")
 
     if args.check_output:
         check_output(
