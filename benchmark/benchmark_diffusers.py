@@ -163,7 +163,8 @@ def benchmark_time(pipeline, prompt, number=3, repeat=3, **kwargs):
 
 
 def benchmark(pipeline, prompt, number=1, repeat=5, include_memory=True, **kwargs):
-    with GPUMemoryMonitor() as gpu_monitor:
+    device = pipeline.device
+    with GPUMemoryMonitor(device) as gpu_monitor:
         if not include_memory:
             gpu_monitor.stop()
         t = benchmark_time(pipeline, prompt, number=number, repeat=repeat, **kwargs)
