@@ -155,7 +155,8 @@ def benchmark(
     include_memory=True,
     **generate_kwargs,
 ):
-    with GPUMemoryMonitor() as gpu_monitor:
+    device = generator.model.device
+    with GPUMemoryMonitor(device) as gpu_monitor:
         if not include_memory:
             gpu_monitor.stop()
         t, f = benchmark_time(
