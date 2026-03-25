@@ -17,7 +17,6 @@ model = AutoModelForCausalLM.from_pretrained(
     model_name,
     token=hf_token,
     torch_dtype=torch.bfloat16,
-    attn_implementation="sdpa",
     mode='S'
 ).to(device)
 model.generation_config.pad_token_id = tokenizer.eos_token_id

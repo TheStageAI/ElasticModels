@@ -17,7 +17,6 @@ model = AutoModelForCausalLM.from_pretrained(
     model_name,
     token=hf_token,
     torch_dtype=torch.bfloat16,
-    attn_implementation="sdpa",
     # S, M, L, XL
     mode='S'
 ).to(device)
