@@ -107,7 +107,7 @@ from elastic_models.transformers import AutoModelForCausalLM
 # Currently we require to have your HF token
 # as we use original weights for part of layers and
 # model confugaration as well
-model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+model_name = "meta-llama/Llama-3.1-8B-Instruct"
 hf_token = ''
 device = torch.device("cuda")
 
