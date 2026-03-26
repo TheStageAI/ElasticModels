@@ -36,6 +36,8 @@ def setup_diffusers_compatibility():
         ('ChromaTransformer2DModel', 'diffusers'),
         ('HiDreamImageTransformer2DModel', 'diffusers'),
         ('QwenImageTransformer2DModel', 'diffusers'),
+        ('ContextParallelConfig', 'diffusers'),
+        ('ParallelConfig', 'diffusers'),
     ]
 
     FAKE_SUBMODULES = {
@@ -59,12 +61,25 @@ def setup_diffusers_compatibility():
             'QwenImageTransformerBlock',
             'Transformer2DModelOutput',
         ],
+        'diffusers.models._modeling_parallel': [
+            'ContextParallelModelPlan',
+            'ParallelConfig',
+        ],
+        'diffusers.hooks.context_parallel': [
+            'EquipartitionSharder',
+        ],
     }
 
     # Create base dummy class
     class FakeDiffusersClass:
         """Dummy class for compatibility with older diffusers versions."""
-        pass
+        @staticmethod
+        def shard(*args, **kwargs):
+            pass
+
+        @staticmethod
+        def unshard(*args, **kwargs):
+            pass
 
     # Patch missing classes in main diffusers module
     patched_classes = []
