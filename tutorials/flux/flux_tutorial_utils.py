@@ -71,7 +71,9 @@ def evaluate_configurations(analyser, results, output_dir):
     eval_results_dir = os.path.join(output_dir, "eval_results")
     os.makedirs(eval_results_dir, exist_ok=True)
 
-    for i, result in enumerate(results):
+    results_list = list(results.values()) if isinstance(results, dict) else results
+
+    for i, result in enumerate(results_list):
         constraint_value = result.constraint_value
         print(f"\nGenerating images for configuration {i+1} (constraint={constraint_value:.4f})...")
 
@@ -148,10 +150,13 @@ def visualize_analysis_results(results):
     Args:
         results: List of ANNA analysis results
     """
+    # Support both dict {constraint: ANNAResult} and list [ANNAResult] inputs
+    results_list = list(results.values()) if isinstance(results, dict) else results
+
     # Extract constraint and objective values for visualization
-    constraint_values = [result.constraint_value for result in results]
-    real_loss_values = [result.real_loss_value for result in results]
-    objective_loss_values = [result.objective_value.item() if torch.is_tensor(result.objective_value) else result.objective_value for result in results]
+    constraint_values = [result.constraint_value for result in results_list]
+    real_loss_values = [result.real_loss_value for result in results_list]
+    objective_loss_values = [result.objective_value.item() if torch.is_tensor(result.objective_value) else result.objective_value for result in results_list]
 
     # Create the plot with two subplots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
@@ -278,10 +283,10 @@ def visualize_quality_metrics(all_scores):
     
     # Extract data for plotting
     constraints = sorted(all_scores.keys())
-    psnr_values = [all_scores[c].get('PSNR', 0) for c in constraints]
-    ssim_values = [all_scores[c].get('SSIM', 0) for c in constraints]
-    fid_values = [all_scores[c].get('FID', float('inf')) for c in constraints]
-    clip_values = [all_scores[c].get('CLIP', 0) for c in constraints]
+    psnr_values = [all_scores[c].get('PSNRMetric', all_scores[c].get('PSNR', 0)) for c in constraints]
+    ssim_values = [all_scores[c].get('SSIMMetric', all_scores[c].get('SSIM', 0)) for c in constraints]
+    fid_values = [all_scores[c].get('FIDMetric', all_scores[c].get('FID', float('inf'))) for c in constraints]
+    clip_values = [all_scores[c].get('CLIPScoreMetric', all_scores[c].get('CLIP', 0)) for c in constraints]
     
     # Create figure with 4 subplots
     fig, axes = plt.subplots(2, 2, figsize=(15, 12))
@@ -347,9 +352,11 @@ def generate_example_results(analyser, results, pipeline, recommended_size, reco
         "A detailed portrait of a wise old wizard with a long beard"
     ]
 
-    if show_examples and len(results) >= 3:
+    results_list = list(results.values()) if isinstance(results, dict) else results
+
+    if show_examples and len(results_list) >= 3:
         # Select configurations: highest compression, middle, and best quality
-        sorted_results = sorted(results, key=lambda x: x.constraint_value)
+        sorted_results = sorted(results_list, key=lambda x: x.constraint_value)
         selected_configs = [
             (sorted_results[0], "Highest Compression"),
             (sorted_results[len(sorted_results)//2], "Balanced"),
