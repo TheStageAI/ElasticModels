@@ -5,7 +5,7 @@ from elastic_models.transformers import AutoModelForCausalLM
 # Currently we require to have your HF token
 # as we use original weights for part of layers and
 # model confugaration as well
-model_name = "mistralai/Mistral-Nemo-Instruct-2407"
+model_name = "mistralai/Mistral-7B-Instruct-v0.3"
 hf_token = ''
 device = torch.device("cuda")
 
@@ -17,7 +17,6 @@ model = AutoModelForCausalLM.from_pretrained(
     model_name,
     token=hf_token,
     torch_dtype=torch.bfloat16,
-    attn_implementation="sdpa",
     # S, M, L, XL
     mode='S'
 ).to(device)

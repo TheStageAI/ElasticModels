@@ -28,7 +28,7 @@ Elastic models are the models produced by TheStage AI ANNA: Automated Neural Net
 
 * Underlying inference engine supports fp16, bf16, int8, fp8, int4, 2:4 sparsity inference. To control quality of models we are using ANNA: Automated NNs Analyzer. For each point corresponding to number of bitops or model size ANNA finds the best quality solution using supported hardware acceleration techniques. Think of it like JPEG for DNNs.
 
-* No dependecies with TensorRT-LLM, Sglang, vLLM. Simple setup through PyPi. 
+* No dependencies with TensorRT-LLM, Sglang, vLLM. Simple setup through PyPi.
 
 
 ### Goals
@@ -45,7 +45,7 @@ Elastic models are the models produced by TheStage AI ANNA: Automated Neural Net
 ## Quick Start
 
 __System requirements:__
-* GPUs: B200 (diffusion), RTX 5090 (diffusion) H100, L40s 
+* GPUs: B200, RTX 5090, RTX 4090, H100, L40s
 * CPU: AMD, Intel
 * Python: 3.10-3.12
 
@@ -53,15 +53,14 @@ __System requirements:__
 To work with our models just run these lines in your terminal:
 
 ```shell
-pip install thestage_elastic_models[nvidia]
-# additional dependencies
-pip install flash_attn==2.8.2 --no-build-isolation
+pip install 'thestage_elastic_models[nvidia,cudnn]'
+pip install nvidia-cudnn-frontend==1.18.0
 ```
 
-Then go to [app.thestage.ai](https://app.thestage.ai), login and generate API token from your profile page. Set up API token as follows:
+Then go to [app.thestage.ai](https://app.thestage.ai), login and generate access token from your profile page. Set up access token as follows:
 
 ```shell
-thestage config set --api-token <YOUR_API_TOKEN>
+thestage config set --access-token <YOUR_ACCESS_TOKEN>
 ```
 
 Congrats, now you can use accelerated models! Test your setup:
@@ -86,7 +85,6 @@ black-forest-labs/FLUX.1-dev                       | S, M, L, XL |          | S 
 black-forest-labs/FLUX.1-schnell                   | S, M, L, XL |          | S        | S, M, L, XL | S, M, L, XL
 deepseek-ai/DeepSeek-R1-Distill-Qwen-14B           |             |          |          | S, M, L, XL | S, M, L, XL
 deepseek-ai/DeepSeek-R1-Distill-Qwen-7B            |             |          |          | S, M, L, XL | S, M, L, XL
-facebook/musicgen-large                            |             |          |          | S, M, L, XL | S, M, L, XL
 genmo/mochi-1-preview                              | S, XL       |          |          | S, XL       |            
 meta-llama/Llama-3.1-8B-Instruct                   |             |          |          | S, M, L, XL | S, M, L, XL
 meta-llama/Llama-3.2-1B-Instruct                   |             |          |          | S, M, L, XL | S, M, L, XL
@@ -109,7 +107,7 @@ from elastic_models.transformers import AutoModelForCausalLM
 # Currently we require to have your HF token
 # as we use original weights for part of layers and
 # model confugaration as well
-model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+model_name = "meta-llama/Llama-3.1-8B-Instruct"
 hf_token = ''
 device = torch.device("cuda")
 
@@ -121,7 +119,6 @@ model = AutoModelForCausalLM.from_pretrained(
     model_name, 
     token=hf_token,
     torch_dtype=torch.bfloat16,
-    attn_implementation="sdpa",
     mode='S'
 ).to(device)
 model.generation_config.pad_token_id = tokenizer.eos_token_id
@@ -165,10 +162,12 @@ print(f"# A:\n{output}\n")
 
 ## Current state
 
-- **Hardware.** Nvidia H100, L40s. More GPUs are coming.
-- **LLMs.** Llama3 1B, 8B instruct, Mistral 7B instruct, Qwen2.5 7B instruct, Deepseek R1: Llama 8B distill, Qwen2.5 7B distill. 
-- **Text-to-Image.** FLUX.1-schnell, FLUX.1-dev.
-- **VLMs.** Coming soon!
+- **Hardware.** Nvidia B200, RTX 5090, RTX 4090, H100, L40s.
+- **LLMs.** Llama3 1B, 8B instruct, Mistral 7B instruct, Mistral-Small 24B, Qwen2.5 7B/14B instruct, Deepseek R1: Qwen2.5 7B distill.
+- **Text-to-Image.** FLUX.1-schnell, FLUX.1-dev, Stable Diffusion XL, Stable Diffusion 3.5.
+- **Text-to-Video.** Mochi, Wan2.2.
+- **Speech-to-Text.** Whisper large-v3, Whisper large-v3-turbo.
+- **VLMs.** Mistral-Small-3.1 24B.
 - **Context length.** Demo models support context lenght up to 8192 tokens and batch size up to 32 depending on GPU.
 - **Image sizes.** Diffusion models currently supports image resolution up to 1280x1280.
 - **Memory usage.** Currently inference engine preallocates memory for maximum possible size. For more precise memory control - contact us at contact@thestage.ai
