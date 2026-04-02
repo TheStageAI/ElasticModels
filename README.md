@@ -76,24 +76,20 @@ Output:
 
 ```shell
     
-----------------------------------------------------------------------------------------------------------------------
-Model                                              | B200        | RTX-4090 | RTX-5090 | H100        | L40S       
-----------------------------------------------------------------------------------------------------------------------
-Qwen/Qwen2.5-14B-Instruct                          |             |          |          | S, M, L, XL | S, M, L, XL
-Qwen/Qwen2.5-7B-Instruct                           |             |          |          | S, M, L, XL | S, M, L, XL
-black-forest-labs/FLUX.1-dev                       | S, M, L, XL |          | S        | S, M, L, XL | S, M, L, XL
-black-forest-labs/FLUX.1-schnell                   | S, M, L, XL |          | S        | S, M, L, XL | S, M, L, XL
-deepseek-ai/DeepSeek-R1-Distill-Qwen-14B           |             |          |          | S, M, L, XL | S, M, L, XL
-deepseek-ai/DeepSeek-R1-Distill-Qwen-7B            |             |          |          | S, M, L, XL | S, M, L, XL
-genmo/mochi-1-preview                              | S, XL       |          |          | S, XL       |            
-meta-llama/Llama-3.1-8B-Instruct                   |             |          |          | S, M, L, XL | S, M, L, XL
-meta-llama/Llama-3.2-1B-Instruct                   |             |          |          | S, M, L, XL | S, M, L, XL
-mistralai/Mistral-7B-Instruct-v0.3                 |             |          |          | S, M, L, XL | S, M, L, XL
-mistralai/Mistral-Nemo-Instruct-2407               |             |          |          | S, M, L, XL | S, M, L, XL
-mistralai/Mistral-Small-3.1-24B-Instruct-2503      |             |          |          | S, M, L, XL | S, M, L    
-openai/whisper-large-v3                            |             |          |          | S           | S          
-stabilityai/stable-diffusion-xl-base-1.0           |             |          |          | XL          | XL         
------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------
+Model                                          | B200        | RTX-4090    | RTX-5090    | H100        | L40S        
+---------------------------------------------------------------------------------------------------------------------
+meta-llama/Llama-3.1-8B-Instruct               | S, M, L, XL | S           | S           | S, M, L, XL | S, M, L, XL
+mistralai/Mistral-7B-Instruct-v0.3             | S, M, L, XL |             | S           | S, M, L, XL | S, M, L, XL
+Qwen/Qwen2.5-7B-Instruct                       | S, M, L, XL | S           | S           | S, M, L, XL | S, M, L, XL
+mistralai/Mistral-Small-24B-Instruct-2501      | S, M, L, XL |             |             | S, M, L, XL |
+black-forest-labs/FLUX.1-schnell               | S, M, L, XL |             | S           | S, M, L, XL | S, M, L, XL
+black-forest-labs/FLUX.1-dev                   | S, M, L, XL |             | S           | S, M, L, XL | S, M, L, XL
+Wan-AI/Wan2.2-T2V-A14B-Diffusers               | S           |             |             | S           |
+openai/whisper-large-v3                        |             | S, M, L, XL | S, M, L, XL | S, M, L, XL | S, M, L, XL
+openai/whisper-large-v3-turbo                  |             | S, M, L, XL | S, M, L, XL | S, M, L, XL | S, M, L, XL
+TheStageAI/thewhisper-large-v3-turbo           |             | S, M, L, XL | S, M, L, XL | S, M, L, XL | S, M, L, XL
+---------------------------------------------------------------------------------------------------------------------
 
 ```
 
@@ -163,15 +159,14 @@ print(f"# A:\n{output}\n")
 ## Current state
 
 - **Hardware.** Nvidia B200, RTX 5090, RTX 4090, H100, L40s.
-- **LLMs.** Llama3 1B, 8B instruct, Mistral 7B instruct, Mistral-Small 24B, Qwen2.5 7B/14B instruct, Deepseek R1: Qwen2.5 7B distill.
-- **Text-to-Image.** FLUX.1-schnell, FLUX.1-dev, Stable Diffusion XL, Stable Diffusion 3.5.
-- **Text-to-Video.** Mochi, Wan2.2.
-- **Speech-to-Text.** Whisper large-v3, Whisper large-v3-turbo.
-- **VLMs.** Mistral-Small-3.1 24B.
+- **LLMs.** Llama3 8B instruct, Mistral 7B instruct, Mistral-Small 24B instruct, Qwen2.5 7B instruct.
+- **Text-to-Image.** FLUX.1-schnell, FLUX.1-dev (with LoRA support).
+- **Text-to-Video.** Wan2.2-T2V-A14B.
+- **Speech-to-Text.** Whisper large-v3, Whisper large-v3-turbo, TheWhisper large-v3-turbo.
 - **Context length.** Demo models support context lenght up to 8192 tokens and batch size up to 32 depending on GPU.
 - **Image sizes.** Diffusion models currently supports image resolution up to 1280x1280.
 - **Memory usage.** Currently inference engine preallocates memory for maximum possible size. For more precise memory control - contact us at contact@thestage.ai
-- **Speed.** Models demonstrates world leading performance comparing to open benchmarks. For instnace, LLama3 8B gives ~195 tok/s with 100/300 input-output test and ~170 tok/s with 4096/1000 input-output test on H100. For each model we are providing benchmarks.
+- **Speed.** For each model we provide latency and quality benchmarks on corresponding model cards.
 
 
 ## Contact Us
